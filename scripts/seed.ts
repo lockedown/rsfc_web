@@ -7,7 +7,6 @@
  *
  * Requires DATABASE_URI and PAYLOAD_SECRET to be set.
  */
-import 'dotenv/config'
 import { getPayload } from 'payload'
 import config from '../src/payload.config'
 

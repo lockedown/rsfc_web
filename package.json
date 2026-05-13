@@ -10,7 +10,7 @@
     "lint": "next lint",
     "generate:types": "payload generate:types",
     "payload": "payload",
-    "seed": "tsx scripts/seed.ts",
+    "seed": "tsx --env-file=.env scripts/seed.ts",
     "optimise:photos": "tsx scripts/optimise-photos.ts"
   },
   "dependencies": {
