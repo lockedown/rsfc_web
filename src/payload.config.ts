@@ -1,5 +1,6 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
+import sharp from 'sharp'
 import { buildConfig } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -53,6 +54,7 @@ export default buildConfig({
   globals: [Settings],
   endpoints: [rolloverEndpoint],
   editor: lexicalEditor(),
+  sharp,
   secret: process.env.PAYLOAD_SECRET || 'dev-secret-change-me',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
@@ -62,18 +64,25 @@ export default buildConfig({
     push: true, // auto-sync schema on first connection (fine for early-stage; switch to migrations later)
   }),
   plugins: [
-    s3Storage({
-      collections: { media: { prefix: 'media' } },
-      bucket: process.env.S3_BUCKET || '',
-      config: {
-        endpoint: process.env.S3_ENDPOINT,
-        region: process.env.S3_REGION || 'auto',
-        credentials: {
-          accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
-          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
-        },
-        forcePathStyle: true,
-      },
-    }),
+    // Only register R2/S3 storage when actually configured.
+    // Without this guard, Payload's admin tries to load the S3 client component
+    // and the missing importMap entry breaks the admin UI.
+    ...(process.env.S3_BUCKET
+      ? [
+          s3Storage({
+            collections: { media: { prefix: 'media' } },
+            bucket: process.env.S3_BUCKET,
+            config: {
+              endpoint: process.env.S3_ENDPOINT,
+              region: process.env.S3_REGION || 'auto',
+              credentials: {
+                accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+                secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+              },
+              forcePathStyle: true,
+            },
+          }),
+        ]
+      : []),
   ],
 })
