@@ -85,7 +85,7 @@ export default async function HomePage() {
             </h1>
             <p className="mt-5 text-lg opacity-80 max-w-prose">
               Raw Skills FC is one of the largest junior football clubs in our area, developing players
-              from U7 through to U18 across boys' and girls' teams.
+              from U8 through to U18 boys teams.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/join" className="btn-accent">Join us</Link>

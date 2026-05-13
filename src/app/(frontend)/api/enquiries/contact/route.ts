@@ -35,5 +35,8 @@ export async function POST(req: Request) {
     overrideAccess: true,
   })
 
-  return NextResponse.redirect(new URL('/contact?sent=1', req.url), { status: 303 })
+  const next = String(form.get('next') ?? '/contact')
+  const redirectTo = new URL(next, req.url)
+  redirectTo.searchParams.set('sent', '1')
+  return NextResponse.redirect(redirectTo, { status: 303 })
 }
