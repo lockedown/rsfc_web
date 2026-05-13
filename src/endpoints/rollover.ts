@@ -81,13 +81,15 @@ export const rolloverEndpoint: Endpoint = {
         continue
       }
 
-      let ageGroupId = team.ageGroup as unknown as string
+      let ageGroupId: number = typeof team.ageGroup === 'object'
+        ? (team.ageGroup as { id: number }).id
+        : (team.ageGroup as number)
       if (override?.newAgeGroupId) {
-        ageGroupId = override.newAgeGroupId
+        ageGroupId = Number(override.newAgeGroupId)
       } else if (body.bumpAgeGroups) {
-        const idx = ladder.findIndex((ag) => String(ag.id) === String(team.ageGroup))
+        const idx = ladder.findIndex((ag) => Number(ag.id) === ageGroupId)
         if (idx >= 0 && idx + 1 < ladder.length) {
-          ageGroupId = String(ladder[idx + 1].id)
+          ageGroupId = Number(ladder[idx + 1].id)
         }
       }
 

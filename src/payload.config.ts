@@ -23,6 +23,7 @@ import { Media } from './collections/Media'
 import { Enquiries } from './collections/Enquiries'
 import { Settings } from './globals/Settings'
 import { rolloverEndpoint } from './endpoints/rollover'
+import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -70,7 +71,8 @@ export default buildConfig({
   },
   db: vercelPostgresAdapter({
     pool: { connectionString },
-    push: true,
+    push: false, // use committed migrations instead
+    prodMigrations: migrations,
   }),
   plugins: [
     // Only register R2/S3 storage when actually configured.
