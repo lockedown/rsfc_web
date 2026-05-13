@@ -5,7 +5,7 @@
   "description": "Raw Skills FC website - Next.js 15 + Payload CMS v3",
   "scripts": {
     "dev": "next dev",
-    "build": "payload generate:importmap && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "generate:types": "payload generate:types",
