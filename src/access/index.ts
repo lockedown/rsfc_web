@@ -1,4 +1,4 @@
-import type { Access, FieldAccess } from 'payload'
+import type { Access, FieldAccess, Where } from 'payload'
 
 export const isAdmin: Access = ({ req: { user } }) => user?.role === 'admin'
 
@@ -18,7 +18,7 @@ export const isAdminField: FieldAccess = ({ req: { user } }) => user?.role === '
  */
 export const teamManagerScoped =
   (relation: 'team' | 'self' = 'team'): Access =>
-  async ({ req }) => {
+  async ({ req }): Promise<boolean | Where> => {
     const { user } = req
     if (!user) return false
     if (user.role === 'admin' || user.role === 'editor') return true
@@ -36,11 +36,10 @@ export const teamManagerScoped =
         ],
       },
     })
-    const teamIds = teams.docs.map((t) => t.id)
+    const teamIds = teams.docs.map((t: { id: string | number }) => t.id)
     if (teamIds.length === 0) return false
 
-    if (relation === 'self') {
-      return { id: { in: teamIds } }
-    }
-    return { team: { in: teamIds } }
+    const where: Where =
+      relation === 'self' ? { id: { in: teamIds } } : { team: { in: teamIds } }
+    return where
   }
