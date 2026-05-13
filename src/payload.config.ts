@@ -79,7 +79,17 @@ export default buildConfig({
     ...(process.env.S3_BUCKET
       ? [
           s3Storage({
-            collections: { media: { prefix: 'media' } },
+            collections: {
+              media: {
+                prefix: 'media',
+                ...(process.env.S3_PUBLIC_URL
+                  ? {
+                      generateFileURL: ({ filename }) =>
+                        `${process.env.S3_PUBLIC_URL}/media/${filename}`,
+                    }
+                  : {}),
+              },
+            },
             bucket: process.env.S3_BUCKET,
             config: {
               endpoint: process.env.S3_ENDPOINT,

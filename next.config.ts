@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: '*.r2.dev' },
       { protocol: 'https', hostname: 'media.rawskillsfc.com' },
+      { protocol: 'https', hostname: 'pub-3d595df8273d4ca188eff2264cdac3f9.r2.dev' },
     ],
   },
   webpack: (webpackConfig) => {
