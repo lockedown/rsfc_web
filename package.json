@@ -14,8 +14,7 @@
     "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
-    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
-    "optimise:photos": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/optimise-photos.ts"
+    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload"
   },
   "dependencies": {
     "@payloadcms/db-vercel-postgres": "3.82.1",
