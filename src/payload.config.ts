@@ -1,10 +1,10 @@
-import path from 'path'
-import { fileURLToPath } from 'url'
-import sharp from 'sharp'
-import { buildConfig } from 'payload'
-import { postgresAdapter } from '@payloadcms/db-postgres'
+import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { s3Storage } from '@payloadcms/storage-s3'
+import path from 'path'
+import { buildConfig } from 'payload'
+import sharp from 'sharp'
+import { fileURLToPath } from 'url'
 
 import { Users } from './collections/Users'
 import { Seasons } from './collections/Seasons'
@@ -27,9 +27,18 @@ import { rolloverEndpoint } from './endpoints/rollover'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+const connectionString =
+  process.env.POSTGRES_URL ||
+  process.env.DATABASE_URL ||
+  process.env.DATABASE_URI ||
+  ''
+
 export default buildConfig({
   admin: {
     user: Users.slug,
+    importMap: {
+      baseDir: path.resolve(dirname),
+    },
     meta: {
       titleSuffix: ' - Raw Skills FC Admin',
     },
@@ -55,18 +64,16 @@ export default buildConfig({
   endpoints: [rolloverEndpoint],
   editor: lexicalEditor(),
   sharp,
-  secret: process.env.PAYLOAD_SECRET || 'dev-secret-change-me',
+  secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  db: postgresAdapter({
-    pool: { connectionString: process.env.DATABASE_URI || process.env.DATABASE_URL || '' },
-    push: true, // auto-sync schema on first connection (fine for early-stage; switch to migrations later)
+  db: vercelPostgresAdapter({
+    pool: { connectionString },
+    push: true,
   }),
   plugins: [
     // Only register R2/S3 storage when actually configured.
-    // Without this guard, Payload's admin tries to load the S3 client component
-    // and the missing importMap entry breaks the admin UI.
     ...(process.env.S3_BUCKET
       ? [
           s3Storage({

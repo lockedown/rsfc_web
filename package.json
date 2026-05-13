@@ -1,48 +1,49 @@
 {
   "name": "rsfc-web",
   "version": "0.1.0",
+  "description": "Raw Skills FC website - Next.js + Payload CMS v3",
+  "license": "MIT",
   "private": true,
-  "description": "Raw Skills FC website - Next.js 15 + Payload CMS v3",
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "generate:types": "payload generate:types",
-    "payload": "payload",
-    "seed": "tsx --env-file=.env scripts/seed.ts",
-    "optimise:photos": "tsx scripts/optimise-photos.ts"
+    "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
+    "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev",
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
+    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
+    "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
+    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "optimise:photos": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/optimise-photos.ts"
   },
   "dependencies": {
-    "@payloadcms/db-postgres": "^3.0.0",
-    "@payloadcms/next": "^3.0.0",
-    "@payloadcms/richtext-lexical": "^3.0.0",
-    "@payloadcms/storage-s3": "^3.0.0",
-    "@payloadcms/ui": "^3.0.0",
-    "clsx": "^2.1.1",
-    "lucide-react": "^0.460.0",
-    "next": "~15.4.11",
-    "payload": "^3.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "resend": "^4.0.0",
-    "sharp": "^0.33.5",
-    "tailwind-merge": "^2.5.4",
-    "zod": "^3.23.8"
+    "@payloadcms/db-vercel-postgres": "3.82.1",
+    "@payloadcms/next": "3.82.1",
+    "@payloadcms/richtext-lexical": "3.82.1",
+    "@payloadcms/storage-s3": "3.82.1",
+    "@payloadcms/ui": "3.82.1",
+    "cross-env": "10.1.0",
+    "graphql": "^16.8.1",
+    "next": "16.2.6",
+    "payload": "3.82.1",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "sharp": "0.34.4"
   },
   "devDependencies": {
-    "@types/node": "^22.9.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@types/node": "24.12.3",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
     "autoprefixer": "^10.4.20",
-    "eslint": "^9.0.0",
-    "eslint-config-next": "~15.4.11",
+    "eslint": "^9.16.0",
+    "eslint-config-next": "16.2.6",
     "postcss": "^8.4.49",
+    "prettier": "^3.4.2",
     "tailwindcss": "^3.4.14",
-    "tsx": "^4.19.2",
-    "typescript": "^5.6.3"
+    "tsx": "4.21.0",
+    "typescript": "5.7.3"
   },
   "engines": {
-    "node": ">=20.9.0"
+    "node": ">=24.15.0"
   }
 }
