@@ -13,6 +13,7 @@ const nextConfig = {
   experimental: {
     reactCompiler: false,
   },
+  serverExternalPackages: ['sharp'],
 }
 
 export default withPayload(nextConfig)

@@ -59,6 +59,7 @@ export default buildConfig({
   },
   db: postgresAdapter({
     pool: { connectionString: process.env.DATABASE_URI || process.env.DATABASE_URL || '' },
+    push: true, // auto-sync schema on first connection (fine for early-stage; switch to migrations later)
   }),
   plugins: [
     s3Storage({

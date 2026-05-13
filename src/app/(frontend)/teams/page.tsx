@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { getCurrentSeason, getPayloadClient } from '@/lib/payload'
 
+export const dynamic = 'force-dynamic'
 export const revalidate = 60
 export const metadata = { title: 'Teams' }
 

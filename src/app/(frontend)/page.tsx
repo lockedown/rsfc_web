@@ -1,21 +1,45 @@
 import Link from 'next/link'
 import { getCurrentSeason, getPayloadClient } from '@/lib/payload'
 
+export const dynamic = 'force-dynamic'
 export const revalidate = 60
 
-export default async function HomePage() {
-  const payload = await getPayloadClient()
-  const season = await getCurrentSeason()
+async function safe<T>(p: Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await p
+  } catch (err) {
+    console.error('payload query failed:', err)
+    return fallback
+  }
+}
 
-  const [news, fixtures, teamsCount, sponsors] = await Promise.all([
+export default async function HomePage() {
+  let payload
+  let season: any = null
+  try {
+    payload = await getPayloadClient()
+    season = await getCurrentSeason()
+  } catch (err) {
+    console.error('HomePage payload init failed:', err)
+    return <EmptyState />
+  }
+
+  const emptyList = { docs: [] as any[] } as any
+  const emptyCount = { totalDocs: 0 } as any
+
+  const newsPromise = safe(
     payload.find({
       collection: 'news',
       where: { status: { equals: 'published' } },
       sort: '-publishedAt',
       limit: 3,
     }),
-    season
-      ? payload.find({
+    emptyList,
+  )
+
+  const fixturesPromise = season
+    ? safe(
+        payload.find({
           collection: 'fixtures',
           where: {
             and: [
@@ -26,12 +50,28 @@ export default async function HomePage() {
           sort: 'kickoff',
           limit: 5,
           depth: 1,
-        })
-      : Promise.resolve({ docs: [] as any[] }),
-    season
-      ? payload.count({ collection: 'teams', where: { season: { equals: season.id } } })
-      : Promise.resolve({ totalDocs: 0 }),
+        }),
+        emptyList,
+      )
+    : Promise.resolve(emptyList)
+
+  const teamsCountPromise = season
+    ? safe(
+        payload.count({ collection: 'teams', where: { season: { equals: season.id } } }),
+        emptyCount,
+      )
+    : Promise.resolve(emptyCount)
+
+  const sponsorsPromise = safe(
     payload.find({ collection: 'sponsors', limit: 12, sort: 'tier' }),
+    emptyList,
+  )
+
+  const [news, fixtures, teamsCount, sponsors] = await Promise.all([
+    newsPromise,
+    fixturesPromise,
+    teamsCountPromise,
+    sponsorsPromise,
   ])
 
   return (
@@ -114,6 +154,18 @@ export default async function HomePage() {
         </section>
       )}
     </>
+  )
+}
+
+function EmptyState() {
+  return (
+    <section className="container py-24">
+      <h1 className="text-5xl">Raw Skills FC</h1>
+      <p className="mt-4 opacity-70">
+        Site is initialising. Once an admin signs in at <code>/admin</code> and adds the first season and teams,
+        this page will populate automatically.
+      </p>
+    </section>
   )
 }
 

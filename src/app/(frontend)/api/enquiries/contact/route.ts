@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getPayloadClient } from '@/lib/payload'
 
+export const dynamic = 'force-dynamic'
+
 async function verifyTurnstile(token: string | null): Promise<boolean> {
   if (!process.env.TURNSTILE_SECRET_KEY) return true // disabled in dev
   if (!token) return false

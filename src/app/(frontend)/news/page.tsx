@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { getPayloadClient } from '@/lib/payload'
 
+export const dynamic = 'force-dynamic'
 export const revalidate = 60
 export const metadata = { title: 'News' }
 
